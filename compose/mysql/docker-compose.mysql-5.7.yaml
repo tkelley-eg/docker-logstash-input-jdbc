@@ -1,20 +1,21 @@
 version: '3.7'
 services: 
   mysql:
-    image: tabeldata.ip-dynamic.com:8088/mysql:5.7
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
     ports: 
       - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD=admin
-      - MYSQL_DATABASE=example
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=admin
+      - MYSQL_ROOT_PASSWORD=neighborlinkdbroot
+      - MYSQL_DATABASE=nlfw_test
+      - MYSQL_USER=nlfw_test
+      - MYSQL_PASSWORD=myneighborlink
     volumes:
       - mysql_data:/var/lib/mysql
     networks: 
       - share-network
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.2
     ports:
       - 9300:9300
       - 9200:9200
@@ -32,7 +33,7 @@ services:
     networks:
       - share-network
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.3.2
+    image: docker.elastic.co/kibana/kibana:7.5.2
     ports:
       - 5601:5601
     networks:
@@ -44,11 +45,11 @@ services:
       dockerfile: ${PWD}/Dockerfile
       context: ${PWD}/
     environment:
-      - LOGSTASH_JDBC_URL=jdbc:mysql://mysql:3306/example?useSSL=false
+      - LOGSTASH_JDBC_URL=jdbc:mysql://mysql:3306/nlfw_test?useSSL=false
       - LOGSTASH_JDBC_DRIVER=com.mysql.cj.jdbc.Driver
       - LOGSTASH_JDBC_DRIVER_JAR_LOCATION=/usr/share/logstash/logstash-core/lib/jars/mysql-connector-java.jar
-      - LOGSTASH_JDBC_USERNAME=admin
-      - LOGSTASH_JDBC_PASSWORD=admin
+      - LOGSTASH_JDBC_USERNAME=nlfw_test
+      - LOGSTASH_JDBC_PASSWORD=myneighborlink
       - LOGSTASH_ELASTICSEARCH_HOST=http://elasticsearch:9200
     volumes: 
       - ./mysql-jdbc-input-plugin.conf:/usr/share/logstash/pipeline/logstash.conf
